@@ -1,0 +1,53 @@
+spring:
+  application:
+    name: resume-forge
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.H2Dialect
+
+  datasource:
+    url: jdbc:h2:file:./data/resumeforge;MODE=PostgreSQL
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  h2:
+    console:
+      enabled: true
+
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 5MB
+
+server:
+  port: 8081
+  servlet:
+    context-path: /
+
+logging:
+  level:
+    root: INFO
+    com.resumeforge: DEBUG
+    org.springframework.web: INFO
+
+---
+spring:
+  config:
+    activate:
+      on-profile: postgres
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  datasource:
+    url: jdbc:postgresql://localhost:5432/resumeforge
+    driver-class-name: org.postgresql.Driver
+    username: postgres
+    password: postgres

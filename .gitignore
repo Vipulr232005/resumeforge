@@ -1,0 +1,43 @@
+# IDE
+.idea/
+.vscode/
+*.iml
+*.swp
+*.swo
+*~
+
+# Build
+target/
+build/
+*.class
+*.jar
+*.war
+*.ear
+
+# Maven
+.m2/
+mvn
+
+# Gradle
+.gradle/
+gradle/
+
+# Database
+*.db
+*.h2.db
+data/
+
+# OS
+.DS_Store
+Thumbs.db
+.env
+.env.local
+
+# Logs
+*.log
+logs/
+
+# Node (if frontend is added later)
+node_modules/
+dist/
+npm-debug.log

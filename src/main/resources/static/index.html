@@ -1,0 +1,736 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>ResumeForge</title>
+<style>
+  :root {
+    --bg:#ffffff; --content:#ffffff; --card:#ffffff; --card-2:#fafafa;
+    --ink:#0a0a0a; --ink-2:#3f3f3f; --muted:#737373; --faint:#a3a3a3;
+    --line:#e7e7e7; --line-2:#d9d9d9;
+    --side:#ffffff; --side-ink:#0a0a0a; --side-muted:#737373;
+    --side-active:#0a0a0a; --side-active-ink:#ffffff; --side-line:#e7e7e7; --side-hover:#f4f4f4;
+    --accent:#0a0a0a; --accent-ink:#ffffff;
+    --ring-track:#e7e7e7; --ring-fill:#0a0a0a; --focus:rgba(0,0,0,.08);
+    --radius:12px; --radius-sm:8px;
+  }
+  :root[data-theme="dark"] {
+    --bg:#0a0a0a; --content:#0e0e0e; --card:#161616; --card-2:#121212;
+    --ink:#fafafa; --ink-2:#d4d4d4; --muted:#8a8a8a; --faint:#5c5c5c;
+    --line:#242424; --line-2:#2f2f2f;
+    --side:#000000; --side-ink:#fafafa; --side-muted:#8a8a8a;
+    --side-active:#1c1c1c; --side-active-ink:#fafafa; --side-line:#1a1a1a; --side-hover:#141414;
+    --accent:#fafafa; --accent-ink:#0a0a0a;
+    --ring-track:#2f2f2f; --ring-fill:#fafafa; --focus:rgba(255,255,255,.1);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]):not([data-theme="dark"]) {
+      --bg:#0a0a0a; --content:#0e0e0e; --card:#161616; --card-2:#121212;
+      --ink:#fafafa; --ink-2:#d4d4d4; --muted:#8a8a8a; --faint:#5c5c5c;
+      --line:#242424; --line-2:#2f2f2f; --side:#000000; --side-ink:#fafafa; --side-muted:#8a8a8a;
+      --side-active:#1c1c1c; --side-active-ink:#fafafa; --side-line:#1a1a1a; --side-hover:#141414;
+      --accent:#fafafa; --accent-ink:#0a0a0a; --ring-track:#2f2f2f; --ring-fill:#fafafa; --focus:rgba(255,255,255,.1);
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body { margin:0; background:var(--bg); color:var(--ink);
+    font:13.5px/1.5 ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; -webkit-font-smoothing:antialiased; }
+  svg { stroke:currentColor; fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+
+  .app { display:grid; grid-template-columns:236px 1fr; min-height:100vh; background:var(--bg); }
+
+  /* Sidebar */
+  .sidebar { background:var(--side); color:var(--side-ink); display:flex; flex-direction:column; position:sticky; top:0; height:100vh; border-right:1px solid var(--side-line); }
+  .brand { padding:18px 18px 14px; display:flex; align-items:center; gap:11px; }
+  .brand .logo { width:34px; height:34px; border-radius:9px; background:var(--accent); color:var(--accent-ink); display:grid; place-items:center; font-weight:800; font-size:17px; }
+  .brand .name { font-size:15px; font-weight:700; letter-spacing:-.2px; }
+  .brand .handle { font-size:11px; color:var(--side-muted); }
+  .nav { padding:10px; display:flex; flex-direction:column; gap:3px; flex:1; }
+  .nav .label { font-size:10px; text-transform:uppercase; letter-spacing:.1em; color:var(--side-muted); padding:14px 10px 6px; }
+  .nav a { display:flex; align-items:center; gap:12px; padding:10px 11px; border-radius:var(--radius-sm); color:var(--side-muted); cursor:pointer; font-weight:500; font-size:13.5px; user-select:none; transition:all .12s; }
+  .nav a:hover { color:var(--side-ink); background:var(--side-hover); }
+  .nav a.active { color:var(--side-active-ink); background:var(--side-active); }
+  .nav a svg { width:17px; height:17px; flex:none; }
+  .nav .spacer { flex:1; }
+
+  /* Main */
+  .main { min-width:0; display:flex; flex-direction:column; background:var(--content); }
+  .topbar { height:64px; display:flex; align-items:center; gap:14px; padding:0 22px; position:sticky; top:0; z-index:5; background:var(--content); border-bottom:1px solid var(--line); }
+  .search { flex:1; max-width:460px; position:relative; }
+  .search svg { width:16px; height:16px; position:absolute; left:13px; top:50%; transform:translateY(-50%); color:var(--muted); }
+  .search input { width:100%; padding:10px 12px 10px 38px; border:1px solid var(--line-2); border-radius:999px; background:var(--card-2); color:var(--ink); font:inherit; outline:none; }
+  .search input:focus { border-color:var(--ink); }
+  .topbar .spacer { flex:1; }
+  .iconbtn { width:38px; height:38px; border-radius:10px; border:1px solid var(--line-2); background:var(--card); color:var(--ink-2); display:grid; place-items:center; cursor:pointer; transition:all .12s; }
+  .iconbtn:hover { border-color:var(--ink); color:var(--ink); }
+  .iconbtn svg { width:17px; height:17px; }
+  .avatar { width:38px; height:38px; border-radius:50%; background:var(--accent); color:var(--accent-ink); display:grid; place-items:center; font-weight:700; font-size:14px; }
+
+  .content { padding:22px; max-width:1280px; width:100%; }
+
+  /* Stats */
+  .stats { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:18px; }
+  .stat { border:1px solid var(--line); border-radius:var(--radius); padding:16px 18px; background:var(--card); }
+  .stat-top { display:flex; align-items:center; justify-content:space-between; }
+  .stat .k { font-size:12.5px; color:var(--muted); }
+  .stat .ic { width:28px; height:28px; border-radius:8px; border:1px solid var(--line-2); display:grid; place-items:center; color:var(--ink-2); }
+  .stat .ic svg { width:15px; height:15px; }
+  .stat .v { font-size:24px; font-weight:720; letter-spacing:-.6px; margin:10px 0 4px; }
+  .stat .delta { font-size:11.5px; color:var(--muted); display:flex; align-items:center; gap:5px; }
+  .stat .delta svg { width:13px; height:13px; color:var(--ink-2); }
+
+  .card { border:1px solid var(--line); border-radius:var(--radius); background:var(--card); overflow:hidden; }
+  .card + .card, .stack > * + * { margin-top:14px; }
+  .card-head { padding:14px 18px; border-bottom:1px solid var(--line); display:flex; align-items:center; gap:10px; }
+  .card-head h2 { margin:0; font-size:14px; font-weight:660; letter-spacing:-.2px; }
+  .card-head p { margin:2px 0 0; font-size:12px; color:var(--muted); }
+  .card-head .right { margin-left:auto; display:flex; gap:8px; align-items:center; }
+  .card-body { padding:18px; }
+
+  .panel { display:none; }
+  .panel.active { display:block; }
+  .row2 { display:grid; grid-template-columns:1.3fr 1fr; gap:14px; }
+
+  /* Forms */
+  .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .field { display:flex; flex-direction:column; gap:6px; margin-bottom:12px; }
+  .field:last-child { margin-bottom:0; }
+  label { font-size:12px; font-weight:550; color:var(--ink-2); }
+  input, textarea, select { width:100%; padding:9px 11px; border:1px solid var(--line-2); border-radius:var(--radius-sm); background:var(--bg); color:var(--ink); font:inherit; outline:none; transition:border-color .12s, box-shadow .12s; }
+  input:focus, textarea:focus, select:focus { border-color:var(--ink); box-shadow:0 0 0 3px var(--focus); }
+  textarea { min-height:72px; resize:vertical; line-height:1.55; }
+  .hint { font-size:11px; color:var(--faint); }
+
+  button { font:inherit; cursor:pointer; border-radius:var(--radius-sm); font-weight:580; padding:9px 15px; border:1px solid var(--line-2); background:var(--card); color:var(--ink); transition:all .12s; }
+  button:hover { border-color:var(--ink); }
+  button:active { transform:translateY(1px); }
+  button.primary { background:var(--accent); color:var(--accent-ink); border-color:var(--accent); }
+  button.primary:hover { filter:brightness(1.12); }
+  button.sm { padding:6px 11px; font-size:12px; }
+  button.block { width:100%; }
+  .actions { display:flex; gap:10px; align-items:center; padding:14px 18px; border-top:1px solid var(--line); background:var(--card-2); }
+  .actions .msg { font-size:12px; color:var(--muted); margin-left:auto; }
+
+  .out { margin:0; padding:14px 16px; border-top:1px solid var(--line); background:var(--card-2); font-family:ui-monospace,"SF Mono",Menlo,Consolas,monospace; font-size:12px; white-space:pre-wrap; word-break:break-word; color:var(--ink-2); max-height:420px; overflow:auto; }
+
+  /* ===== Editor (rxresume-style) ===== */
+  .editor { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:16px; align-items:start; }
+  .ed-left { display:flex; flex-direction:column; gap:14px; }
+  .sec { border:1px solid var(--line); border-radius:var(--radius); background:var(--card); overflow:hidden; }
+  .sec-head { padding:13px 16px; display:flex; align-items:center; gap:10px; cursor:pointer; user-select:none; }
+  .sec-head .sic { width:26px; height:26px; border-radius:7px; border:1px solid var(--line-2); display:grid; place-items:center; color:var(--ink-2); }
+  .sec-head .sic svg { width:14px; height:14px; }
+  .sec-head h3 { margin:0; font-size:13.5px; font-weight:620; flex:1; }
+  .sec-head .chev { color:var(--muted); transition:transform .15s; }
+  .sec.collapsed .chev { transform:rotate(-90deg); }
+  .sec-body { padding:0 16px 16px; }
+  .sec.collapsed .sec-body { display:none; }
+
+  .item { border:1px solid var(--line); border-radius:var(--radius-sm); padding:14px; margin-bottom:12px; background:var(--card-2); }
+  .item:last-of-type { margin-bottom:12px; }
+  .item-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+  .item-head .t { font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); font-weight:600; }
+  .rm { padding:4px 9px; font-size:11px; color:var(--muted); border-color:var(--line-2); }
+  .rm:hover { border-color:var(--ink); color:var(--ink); }
+  .add { width:100%; border-style:dashed; color:var(--ink-2); }
+
+  /* Preview pane */
+  .preview-wrap { position:sticky; top:84px; }
+  .pv-bar { display:flex; align-items:center; gap:10px; margin-bottom:12px; }
+  .pv-bar select { max-width:200px; }
+  .pv-bar .sp { flex:1; }
+  .pv-scroll { background:var(--card-2); border:1px solid var(--line); border-radius:var(--radius); padding:20px; max-height:calc(100vh - 180px); overflow:auto; display:flex; justify-content:center; }
+  .page { --resume-accent:#222; background:#ffffff; color:#1a1a1a; width:100%; max-width:560px; padding:42px 46px; box-shadow:0 2px 14px rgba(0,0,0,.14); font-family:Arial,Helvetica,sans-serif; }
+  .rp-name { font-size:24px; font-weight:750; letter-spacing:-.4px; }
+  .rp-contact { display:flex; flex-wrap:wrap; align-items:center; gap:4px 10px; font-size:11.5px; color:#555; margin-top:4px; }
+  .rp-contact-item { white-space:nowrap; }
+  .rp-contact-sep { color:#aaa; }
+  .rp-social { display:inline-flex; align-items:center; gap:4px; color:#333; text-decoration:none; white-space:nowrap; }
+  .rp-social:hover, .rp-social:focus-visible { color:#111; text-decoration:underline; text-underline-offset:2px; }
+  .rp-social:focus-visible { outline:2px solid #2563eb; outline-offset:2px; border-radius:2px; }
+  .rp-social svg { width:13px; height:13px; flex:none; stroke:none; fill:currentColor; }
+  .rp-social.linkedin svg { fill:#0a66c2; }
+  .rp-sec { margin-top:18px; }
+  .rp-h { font-size:12.5px; font-weight:750; color:#111; letter-spacing:.02em; margin-bottom:7px; }
+  .rp-h.caps { text-transform:uppercase; letter-spacing:.1em; font-size:11.5px; }
+  .rp-h.div { border-bottom:1.5px solid var(--resume-accent,#222); padding-bottom:4px; }
+  .rp-body { font-size:11.5px; color:#2a2a2a; line-height:1.5; }
+  .rp-entry { margin-bottom:11px; }
+  .rp-entry:last-child { margin-bottom:0; }
+  .rp-entry .et { font-size:12px; font-weight:700; color:#111; }
+  .rp-entry .em { font-size:10.5px; color:#666; margin-top:1px; }
+  .rp-entry ul { margin:5px 0 0; padding-left:16px; }
+  .rp-entry ul li { font-size:11.5px; color:#2a2a2a; margin-bottom:2px; }
+  .rp-skills { font-size:11.5px; color:#2a2a2a; }
+
+  /* Chips / donut / plans / table reused */
+  .chips { display:flex; gap:6px; flex-wrap:wrap; }
+  .chip { padding:5px 11px; border-radius:999px; font-size:12px; font-weight:500; border:1px solid var(--line-2); background:var(--card); color:var(--ink-2); }
+  .chip.solid { background:var(--accent); color:var(--accent-ink); border-color:var(--accent); }
+  .chip.ghost { border-style:dashed; color:var(--muted); }
+  .chip-group { margin-bottom:16px; } .chip-group:last-child { margin-bottom:0; }
+  .chip-group .t { font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); margin-bottom:8px; display:flex; gap:8px; }
+  .chip-group .t .count { color:var(--faint); letter-spacing:0; text-transform:none; }
+
+  .health { display:flex; flex-direction:column; align-items:center; padding:22px 18px 8px; }
+  .donut { width:172px; height:172px; border-radius:50%; display:grid; place-items:center; position:relative; background:conic-gradient(var(--ring-fill) 0 var(--pct,0%), var(--ring-track) var(--pct,0%) 100%); }
+  .donut::before { content:""; position:absolute; inset:18px; border-radius:50%; background:var(--card); }
+  .donut .inner { position:relative; text-align:center; }
+  .donut .inner .big { font-size:28px; font-weight:740; letter-spacing:-1px; }
+  .donut .inner .sub { font-size:11.5px; color:var(--muted); }
+
+  .plans { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; }
+  .plan { border:1px solid var(--line); border-radius:var(--radius); padding:14px; background:var(--card); display:flex; flex-direction:column; gap:12px; }
+  .plan-name { font-weight:660; font-size:14px; display:flex; align-items:center; justify-content:space-between; }
+  .plan-name .badge { font-size:10px; font-weight:600; color:var(--muted); border:1px solid var(--line-2); border-radius:999px; padding:2px 8px; }
+  .plan-meta { font-size:12px; color:var(--muted); }
+  .tpreview { background:var(--card-2); border:1px solid var(--line); border-radius:8px; padding:16px 14px; aspect-ratio:85/110; display:flex; flex-direction:column; gap:9px; overflow:hidden; }
+  .tp-name { height:9px; width:58%; background:var(--ink); border-radius:2px; } .tp-name.center { margin:0 auto; }
+  .tp-contact { height:4px; width:42%; background:var(--faint); border-radius:2px; } .tp-contact.center { margin:0 auto; }
+  .tp-sec { display:flex; flex-direction:column; gap:4px; }
+  .tp-h { font-size:6.5px; font-weight:800; letter-spacing:.04em; color:var(--ink-2); line-height:1; }
+  .tp-h.caps { text-transform:uppercase; letter-spacing:.12em; } .tp-h.div { border-bottom:1px solid var(--template-accent,var(--line-2)); padding-bottom:3px; }
+  .tp-line { height:3px; background:var(--line-2); border-radius:2px; }
+  .tp-chips { display:flex; gap:3px; flex-wrap:wrap; } .tp-chips span { height:5px; width:20px; background:var(--line-2); border-radius:3px; }
+
+  table { width:100%; border-collapse:collapse; }
+  th, td { text-align:left; padding:12px 18px; border-bottom:1px solid var(--line); font-size:12.5px; }
+  th { font-size:10px; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); font-weight:600; background:var(--card-2); }
+  td { color:var(--ink-2); } tr:last-child td { border-bottom:none; }
+  .rowname { display:flex; align-items:center; gap:10px; color:var(--ink); font-weight:550; }
+  .rowav { width:28px; height:28px; border-radius:50%; border:1px solid var(--line-2); display:grid; place-items:center; font-size:11px; font-weight:700; color:var(--ink); }
+  .tag { font-size:11px; font-weight:600; padding:3px 9px; border-radius:999px; border:1px solid var(--line-2); color:var(--ink-2); }
+  .tag.ok { background:var(--accent); color:var(--accent-ink); border-color:var(--accent); }
+  .empty { padding:30px 18px; text-align:center; color:var(--faint); font-size:12.5px; }
+
+  @media (max-width:1040px) { .editor { grid-template-columns:1fr; } .preview-wrap { position:static; } }
+  @media (max-width:900px) {
+    .app { grid-template-columns:1fr; }
+    .sidebar { position:static; height:auto; flex-direction:row; align-items:center; overflow-x:auto; }
+    .brand { padding:12px 14px; } .nav { flex-direction:row; padding:8px; } .nav .label, .nav .spacer, .brand .meta { display:none; }
+    .stats, .plans { grid-template-columns:repeat(2,1fr); } .row2 { grid-template-columns:1fr; }
+    .search { max-width:none; } .content { padding:16px; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand"><div class="logo">R</div><div class="meta"><div class="name">ResumeForge</div><div class="handle">@resumeforge</div></div></div>
+    <nav class="nav" id="nav">
+      <span class="label">Workspace</span>
+      <a data-tab="build" class="active"><svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>Editor</a>
+      <a data-tab="parse"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>Import Text</a>
+      <a data-tab="tailor"><svg viewBox="0 0 24 24"><circle cx="6" cy="6" r="2.4"/><circle cx="6" cy="18" r="2.4"/><path d="M20 6H8.4M20 18H8.4"/></svg>Tailor to JD</a>
+      <span class="label">Output</span>
+      <a data-tab="templates"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Templates</a>
+      <a data-tab="activity"><svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>Activity</a>
+      <span class="spacer"></span>
+      <a id="nav-settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8 2 2 0 1 1-2.8 2.8 1.6 1.6 0 0 0-2.7 1.1 2 2 0 1 1-4 0 1.6 1.6 0 0 0-2.4-1.1 1.6 1.6 0 0 0-1.8.3 2 2 0 1 1-2.8-2.8 1.6 1.6 0 0 0 .3-1.8A1.6 1.6 0 0 0 1 12.6a2 2 0 1 1 0-4 1.6 1.6 0 0 0 3.6-1 1.6 1.6 0 0 0-.3-1.8 2 2 0 1 1 2.8-2.8 1.6 1.6 0 0 0 1.8.3 1.6 1.6 0 0 0 1-1.5 2 2 0 1 1 4 0 1.6 1.6 0 0 0 2.7 1.1 1.6 1.6 0 0 0 1.8-.3 2 2 0 1 1 2.8 2.8 1.6 1.6 0 0 0-.3 1.8 1.6 1.6 0 0 0 1.5 1 2 2 0 1 1 0 4 1.6 1.6 0 0 0-1.5 1Z"/></svg>Setting</a>
+      <a id="nav-support"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>Support</a>
+    </nav>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><input id="search" placeholder="Search templates…"/></div>
+      <span class="spacer"></span>
+      <button class="iconbtn" id="theme-btn" title="Toggle theme"><svg id="theme-icon" viewBox="0 0 24 24"></svg></button>
+      <button class="iconbtn" title="Notifications"><svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></button>
+      <div class="avatar">R</div>
+    </div>
+
+    <div class="content">
+      <div class="stats">
+        <div class="stat"><div class="stat-top"><span class="k">Templates</span><span class="ic"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></span></div><div class="v" id="st-templates">4</div><div class="delta"><svg viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></svg>ATS-safe layouts</div></div>
+        <div class="stat"><div class="stat-top"><span class="k">Live preview</span><span class="ic"><svg viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></span></div><div class="v">Instant</div><div class="delta"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Updates as you type</div></div>
+        <div class="stat"><div class="stat-top"><span class="k">Tailoring</span><span class="ic"><svg viewBox="0 0 24 24"><circle cx="6" cy="6" r="2.4"/><circle cx="6" cy="18" r="2.4"/><path d="M20 6H8.4M20 18H8.4"/></svg></span></div><div class="v">Rule-based</div><div class="delta"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>No fabrication</div></div>
+        <div class="stat"><div class="stat-top"><span class="k">Export</span><span class="ic"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></span></div><div class="v">PDF</div><div class="delta"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Text-selectable</div></div>
+      </div>
+
+      <!-- EDITOR -->
+      <section class="panel active" id="build">
+        <div class="card" style="margin-bottom:14px"><div class="card-body" style="display:flex;gap:8px;align-items:center;padding:10px 14px">
+          <button class="sm" type="button" onclick="undoEdit()" title="Undo last edit">Undo</button>
+          <button class="sm" type="button" onclick="redoEdit()" title="Redo last edit">Redo</button>
+          <button class="sm" type="button" onclick="exportResumeJson()">Export JSON</button>
+          <button class="sm" type="button" onclick="document.getElementById('json-import').click()">Import JSON</button>
+          <input id="json-import" type="file" accept="application/json,.json" hidden onchange="importResumeJson(event)">
+          <span class="spacer"></span><span id="draft-status" class="hint">Saved in this browser</span>
+        </div></div>
+        <div class="editor">
+          <div class="ed-left" id="ed-left"></div>
+          <div class="preview-wrap">
+            <div class="pv-bar">
+              <select id="b-template"><option>MINIMAL</option><option>PROFESSIONAL</option><option>CHRONOLOGICAL</option><option>TECHNICAL</option><option>MODERN</option><option>EXECUTIVE</option></select>
+              <input id="accent-color" type="color" value="#222222" title="Choose divider color" aria-label="Choose divider color" style="width:38px;height:36px;padding:4px">
+              <span class="sp"></span>
+              <button class="sm" onclick="validateResume()">Validate</button>
+              <button class="primary sm" onclick="downloadPdf()">Download PDF</button>
+            </div>
+            <div class="pv-scroll"><div class="page" id="page"></div></div>
+            <div class="msg" id="b-msg" style="font-size:12px;color:var(--muted);margin-top:8px;min-height:16px"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PARSE -->
+      <section class="panel" id="parse">
+        <div class="card">
+          <div class="card-head"><div><h2>Import from Text</h2><p>Paste resume text, extract a structured record, then load it into the editor.</p></div></div>
+          <div class="card-body"><div class="field"><label>Resume text</label><textarea id="p-text" style="min-height:220px">Jane Doe
+jane@example.com
+555-0100
+Skills: Java, Spring Boot, AWS
+Experience
+Software Engineer - Acme
+Jan 2021 - Present
+- Built REST APIs
+- Cut latency 30%
+Education
+BS Computer Science, UT Austin</textarea></div></div>
+          <div class="actions"><button class="primary" onclick="parseText()">Parse</button><button onclick="parseIntoEditor()">Parse &amp; load into editor</button><span class="msg" id="p-msg"></span></div>
+          <pre class="out" id="p-out" style="display:none"></pre>
+        </div>
+      </section>
+
+      <!-- TAILOR -->
+      <section class="panel" id="tailor">
+        <div class="row2">
+          <div class="card">
+            <div class="card-head"><div><h2>Tailor to a Job Description</h2><p>Paste your resume (copied from a PDF) + the JD. We parse it, pull the key points, and reorder everything around the role — never inventing content.</p></div></div>
+            <div class="card-body">
+              <div class="field"><label>Your resume — raw text / copied from PDF</label><textarea id="t-raw" style="min-height:200px">Jane Doe
+jane@example.com | 555-0100 | Austin, TX
+
+PROFESSIONAL SUMMARY
+Software engineer with 4 years building cloud services.
+
+TECHNICAL SKILLS
+Java, Spring Boot, AWS, Docker, React, SQL
+
+WORK EXPERIENCE
+Software Engineer - Acme
+Jan 2021 - Present
+• Built REST APIs in Spring Boot serving 2M requests/day
+• Wrote a React admin UI used by the ops team
+• Deployed services to AWS with Docker
+
+EDUCATION
+B.S. Computer Science, UT Austin, 2020</textarea><span class="hint">Headers like "Work Experience", "Technical Skills", bullets (•, -, *) are all understood.</span></div>
+              <div class="field"><label>Job description</label><textarea id="t-jd" style="min-height:120px">Looking for a Java developer with strong AWS and Docker skills. Experience with Kubernetes and Terraform is a plus. You will design REST APIs and work with SQL databases.</textarea></div>
+            </div>
+            <div class="actions"><button class="primary" onclick="smartBuild()">Tailor &amp; build resume</button><span class="msg" id="t-msg"></span></div>
+          </div>
+          <div class="card">
+            <div class="card-head"><div><h2>Match Summary</h2><p>Keyword coverage against the JD</p></div></div>
+            <div class="health"><div class="donut" id="cov-donut" style="--pct:0%"><div class="inner"><div class="big" id="cov-pct">—</div><div class="sub">match</div></div></div></div>
+            <div class="card-body" id="t-out" style="border-top:1px solid var(--line)"><div class="empty">Paste a resume + JD and run it to see the tailored result.</div></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TEMPLATES -->
+      <section class="panel" id="templates">
+        <div class="card">
+          <div class="card-head"><div><h2>Templates</h2><p>Single-column layouts with standard headings and editable text. Accent color is limited to divider rules.</p></div><span class="right">6 layouts</span></div>
+          <div class="card-body"><div class="plans" id="plans"></div></div>
+        </div>
+      </section>
+
+      <!-- ACTIVITY -->
+      <section class="panel" id="activity">
+        <div class="card">
+          <div class="card-head"><div><h2>Recent Activity</h2><p>Your actions this session.</p></div></div>
+          <table><thead><tr><th>Action</th><th>Detail</th><th>Time</th><th>Status</th></tr></thead>
+          <tbody id="activity-body"><tr><td colspan="4" class="empty">No activity yet.</td></tr></tbody></table>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const el = h => { const d=document.createElement('div'); d.innerHTML=h.trim(); return d.firstElementChild; };
+const esc = s => (s==null?'':String(s)).replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+const nz = s => { s=(s||'').trim(); return s || undefined; };
+
+/* ===== Theme ===== */
+const root = document.documentElement;
+const SUN = '<circle cx="12" cy="12" r="4.2"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>';
+const MOON = '<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/>';
+function setTheme(t){ root.setAttribute('data-theme', t); try{localStorage.setItem('rf-theme',t);}catch(e){} $('theme-icon').innerHTML = t==='dark'?SUN:MOON; }
+(function(){ let s; try{s=localStorage.getItem('rf-theme');}catch(e){} setTheme(s||'dark'); })();
+$('theme-btn').onclick = () => setTheme(root.getAttribute('data-theme')==='dark'?'light':'dark');
+
+/* ===== Nav ===== */
+document.querySelectorAll('#nav a[data-tab]').forEach(a => a.onclick = () => {
+  document.querySelectorAll('#nav a').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));
+  a.classList.add('active'); $(a.dataset.tab).classList.add('active');
+});
+$('nav-settings').onclick = () => $('theme-btn').click();
+$('nav-support').onclick = () => $('search').focus();
+
+/* ===== Activity ===== */
+function logActivity(action, detail, status){
+  const b=$('activity-body'); if(b.querySelector('.empty')) b.innerHTML='';
+  const time=new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+  b.prepend(el('<tr><td><div class="rowname"><span class="rowav">'+action.charAt(0)+'</span>'+action+'</div></td><td>'+esc(detail)+'</td><td>'+time+'</td><td><span class="tag ok">'+status+'</span></td></tr>'));
+}
+
+/* ===== Editor state ===== */
+const state = {
+  basics:{ fullName:'Jane Doe', email:'jane@example.com', phone:'555-0100', location:'Austin, TX', linkedin:'', github:'' },
+  summary:'Software engineer with 4 years building reliable cloud services.',
+  skills:'Java, Spring Boot, AWS, Docker, React',
+  experience:[{ title:'Software Engineer', company:'Acme', startDate:'Jan 2021', endDate:'Present', bullets:'Built REST APIs in Spring Boot serving 2M requests/day\nCut p99 latency 30% with a caching layer' }],
+  education:[{ degree:'B.S.', field:'Computer Science', institution:'UT Austin', graduationDate:'2020', gpa:'' }],
+  projects:[],
+  certifications:'AWS Certified Developer',
+  accentColor:'#222222'
+};
+const DRAFT_KEY='resumeforge.resume.draft.v1';
+const undoStack=[], redoStack=[];
+try {
+  const saved=JSON.parse(localStorage.getItem(DRAFT_KEY)||'null');
+  if(saved && saved.basics && Array.isArray(saved.experience)) Object.assign(state,saved);
+} catch(e) { console.warn('Could not restore local draft',e); }
+let saveTimer;
+function saveDraft(){
+  try { localStorage.setItem(DRAFT_KEY,JSON.stringify(state)); $('draft-status').textContent='Saved in this browser · '+new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}); }
+  catch(e) { $('draft-status').textContent='Browser storage unavailable'; }
+}
+function checkpoint(){
+  undoStack.push(JSON.stringify(state)); if(undoStack.length>200) undoStack.shift(); redoStack.length=0;
+}
+function applyHistory(from,to){
+  if(!from.length) return;
+  to.push(JSON.stringify(state)); Object.assign(state,JSON.parse(from.pop()));
+  buildEditor(); renderPreview();
+}
+function undoEdit(){ applyHistory(undoStack,redoStack); }
+function redoEdit(){ applyHistory(redoStack,undoStack); }
+function exportResumeJson(){
+  const blob=new Blob([JSON.stringify(collectResume(),null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');
+  a.href=url;a.download=(state.basics.fullName||'resume').trim().toLowerCase().replace(/[^a-z0-9]+/g,'-')+'.json';a.click();URL.revokeObjectURL(url);
+}
+async function importResumeJson(event){
+  const file=event.target.files&&event.target.files[0];if(!file)return;
+  try { checkpoint();loadResumeIntoEditor(JSON.parse(await file.text()));$('b-msg').textContent='Imported JSON resume — review and edit it.'; }
+  catch(e) { $('b-msg').textContent='Could not import JSON: '+e.message; }
+  event.target.value='';
+}
+const ICON = {
+  basics:'<path d="M20 21a8 8 0 1 0-16 0"/><circle cx="12" cy="7" r="4"/>',
+  summary:'<path d="M4 6h16M4 12h16M4 18h10"/>',
+  skills:'<path d="m12 2 2.4 7.4H22l-6 4.4 2.3 7.2L12 16.6 5.7 21l2.3-7.2-6-4.4h7.6Z"/>',
+  experience:'<rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>',
+  education:'<path d="M22 10 12 5 2 10l10 5 10-5Z"/><path d="M6 12v5a6 3 0 0 0 12 0v-5"/>',
+  projects:'<path d="M3 7h18v13H3z"/><path d="M3 7l3-4h12l3 4"/>',
+  certifications:'<circle cx="12" cy="8" r="6"/><path d="M8.2 13 7 22l5-3 5 3-1.2-9"/>'
+};
+
+/* bind a text field directly to a state object */
+function bindField(label, obj, key, opts={}){
+  const tag = opts.area ? 'textarea' : 'input';
+  const f = el('<div class="field"><label>'+label+'</label><'+tag+'></'+tag+'>'+(opts.hint?'<span class="hint">'+opts.hint+'</span>':'')+'</div>');
+  const inp = f.querySelector(tag); inp.value = obj[key]||'';
+  if (opts.ph) inp.placeholder = opts.ph;
+  inp.oninput = () => { checkpoint(); obj[key]=inp.value; renderPreview(); };
+  return f;
+}
+
+function expItem(obj){
+  const f = el('<div class="item"><div class="item-head"><span class="t">Experience</span><button class="rm" type="button">Remove</button></div></div>');
+  const g = el('<div class="grid-2"></div>');
+  g.append(bindField('Job title', obj,'title'), bindField('Company', obj,'company'), bindField('Start', obj,'startDate',{ph:'Jan 2021'}), bindField('End', obj,'endDate',{ph:'Present'}));
+  f.append(g, bindField('Bullets (one per line)', obj,'bullets',{area:true}));
+  f.querySelector('.rm').onclick = () => { checkpoint(); state.experience.splice(state.experience.indexOf(obj),1); f.remove(); renderPreview(); };
+  return f;
+}
+function eduItem(obj){
+  const f = el('<div class="item"><div class="item-head"><span class="t">Education</span><button class="rm" type="button">Remove</button></div></div>');
+  const g = el('<div class="grid-2"></div>');
+  g.append(bindField('Degree', obj,'degree',{ph:'B.S.'}), bindField('Field', obj,'field',{ph:'Computer Science'}), bindField('Institution', obj,'institution'), bindField('Graduated', obj,'graduationDate',{ph:'2020'}));
+  f.append(g, bindField('GPA (optional)', obj,'gpa'));
+  f.querySelector('.rm').onclick = () => { checkpoint(); state.education.splice(state.education.indexOf(obj),1); f.remove(); renderPreview(); };
+  return f;
+}
+function projItem(obj){
+  const f = el('<div class="item"><div class="item-head"><span class="t">Project</span><button class="rm" type="button">Remove</button></div></div>');
+  const g = el('<div class="grid-2"></div>');
+  g.append(bindField('Title', obj,'title'), bindField('Technologies', obj,'technologies',{hint:'Comma separated'}));
+  f.append(g, bindField('Description', obj,'description',{area:true}));
+  f.querySelector('.rm').onclick = () => { checkpoint(); state.projects.splice(state.projects.indexOf(obj),1); f.remove(); renderPreview(); };
+  return f;
+}
+
+function section(key, title, bodyEl){
+  const s = el('<div class="sec"><div class="sec-head"><span class="sic"><svg viewBox="0 0 24 24">'+ICON[key]+'</svg></span><h3>'+title+'</h3><span class="chev"><svg viewBox="0 0 24 24" width="16" height="16"><path d="m6 9 6 6 6-6"/></svg></span></div><div class="sec-body"></div></div>');
+  s.querySelector('.sec-body').append(bodyEl);
+  s.querySelector('.sec-head').onclick = () => s.classList.toggle('collapsed');
+  return s;
+}
+
+function buildEditor(){
+  const L = $('ed-left'); L.innerHTML='';
+
+  // Basics
+  const basics = el('<div></div>');
+  const bg = el('<div class="grid-2"></div>');
+  bg.append(bindField('Full name', state.basics,'fullName'), bindField('Email', state.basics,'email'),
+            bindField('Phone', state.basics,'phone'), bindField('Location', state.basics,'location'),
+            bindField('LinkedIn', state.basics,'linkedin',{ph:'linkedin.com/in/…'}), bindField('GitHub', state.basics,'github',{ph:'github.com/…'}));
+  basics.append(bg);
+  L.append(section('basics','Basics', basics));
+
+  // Summary
+  const sum = el('<div></div>'); sum.append(bindField('Professional summary', state,'summary',{area:true}));
+  L.append(section('summary','Summary', sum));
+
+  // Skills
+  const sk = el('<div></div>'); sk.append(bindField('Skills', state,'skills',{area:true, hint:'Comma separated'}));
+  L.append(section('skills','Skills', sk));
+
+  // Experience
+  const expWrap = el('<div></div>'); const expList = el('<div id="exp-list"></div>');
+  state.experience.forEach(o => expList.append(expItem(o)));
+  const addExp = el('<button class="add" type="button">+ Add experience</button>');
+  addExp.onclick = () => { checkpoint(); const o={title:'',company:'',startDate:'',endDate:'',bullets:''}; state.experience.push(o); expList.append(expItem(o)); renderPreview(); };
+  expWrap.append(expList, addExp);
+  L.append(section('experience','Experience', expWrap));
+
+  // Education
+  const eduWrap = el('<div></div>'); const eduList = el('<div id="edu-list"></div>');
+  state.education.forEach(o => eduList.append(eduItem(o)));
+  const addEdu = el('<button class="add" type="button">+ Add education</button>');
+  addEdu.onclick = () => { checkpoint(); const o={degree:'',field:'',institution:'',graduationDate:'',gpa:''}; state.education.push(o); eduList.append(eduItem(o)); renderPreview(); };
+  eduWrap.append(eduList, addEdu);
+  L.append(section('education','Education', eduWrap));
+
+  // Projects
+  const prWrap = el('<div></div>'); const prList = el('<div id="proj-list"></div>');
+  state.projects.forEach(o => prList.append(projItem(o)));
+  const addPr = el('<button class="add" type="button">+ Add project</button>');
+  addPr.onclick = () => { checkpoint(); const o={title:'',description:'',technologies:''}; state.projects.push(o); prList.append(projItem(o)); renderPreview(); };
+  prWrap.append(prList, addPr);
+  L.append(section('projects','Projects', prWrap));
+
+  // Certifications
+  const cert = el('<div></div>'); cert.append(bindField('Certifications', state,'certifications',{area:true, hint:'Comma separated'}));
+  L.append(section('certifications','Certifications', cert));
+}
+
+/* ===== Build backend JSON ===== */
+const splitList = s => (s||'').split(/[,\n]/).map(x=>x.trim()).filter(Boolean);
+const splitLines = s => (s||'').split('\n').map(x=>x.trim()).filter(Boolean);
+function collectResume(){
+  const b = state.basics;
+  return {
+    contact: { fullName:nz(b.fullName), email:nz(b.email), phone:nz(b.phone), location:nz(b.location), linkedin:nz(b.linkedin), github:nz(b.github) },
+    summary: nz(state.summary),
+    skills: splitList(state.skills),
+    experience: state.experience.filter(e=>nz(e.title)||nz(e.company)).map(e=>({ title:nz(e.title), company:nz(e.company), startDate:nz(e.startDate), endDate:nz(e.endDate), bullets:splitLines(e.bullets) })),
+    education: state.education.filter(e=>nz(e.degree)||nz(e.institution)||nz(e.field)).map(e=>({ degree:nz(e.degree), field:nz(e.field), institution:nz(e.institution), graduationDate:nz(e.graduationDate), gpa:nz(e.gpa) })),
+    projects: state.projects.filter(p=>nz(p.title)).map(p=>({ title:nz(p.title), description:nz(p.description), technologies:splitList(p.technologies) })),
+    certifications: splitList(state.certifications)
+  };
+}
+
+/* ===== Live preview (mirrors backend section order/style) ===== */
+const ORDER = {
+  MINIMAL:['summary','skills','experience','education','projects','certifications'],
+  PROFESSIONAL:['summary','skills','experience','education','projects','certifications'],
+  CHRONOLOGICAL:['experience','education','skills','summary','projects','certifications'],
+  TECHNICAL:['skills','projects','experience','education','summary','certifications'],
+  MODERN:['summary','experience','skills','education','projects','certifications'],
+  EXECUTIVE:['experience','education','skills','summary','projects','certifications']
+};
+function renderPreview(){
+  const tpl = $('b-template').value;
+  const caps = tpl==='CHRONOLOGICAL'||tpl==='TECHNICAL';
+  const div = tpl!=='MINIMAL'&&tpl!=='TECHNICAL';
+  const accent=state.accentColor|| (tpl==='MODERN'?'#2563eb':tpl==='EXECUTIVE'?'#0f766e':'#222');
+  if($('accent-color') && document.activeElement!==$('accent-color')) $('accent-color').value=accent;
+  $('page').style.setProperty('--resume-accent',accent);
+  const hc = 'rp-h' + (caps?' caps':'') + (div?' div':'');
+  const b = state.basics;
+  const contactParts = [nz(b.email), nz(b.phone), nz(b.location)].filter(Boolean).map(x=>'<span class="rp-contact-item">'+esc(x)+'</span>');
+  if (nz(b.linkedin)) contactParts.push(profileLink('linkedin', b.linkedin));
+  if (nz(b.github)) contactParts.push(profileLink('github', b.github));
+  const contact = contactParts.join('<span class="rp-contact-sep" aria-hidden="true">·</span>');
+  let h = '<div class="rp-name">'+esc(b.fullName||'Your Name')+'</div>';
+  if (contact) h += '<div class="rp-contact">'+contact+'</div>';
+
+  const sec = (title, inner) => inner ? '<div class="rp-sec"><div class="'+hc+'">'+title+'</div>'+inner+'</div>' : '';
+  const R = {
+    summary: () => sec('Summary', nz(state.summary) ? '<div class="rp-body">'+esc(state.summary)+'</div>' : ''),
+    skills: () => { const a=splitList(state.skills); return sec('Skills', a.length ? '<div class="rp-skills">'+a.map(esc).join(' · ')+'</div>' : ''); },
+    experience: () => { const items=state.experience.filter(e=>nz(e.title)||nz(e.company)); if(!items.length) return '';
+      return sec('Experience', items.map(e=>{
+        const meta=[nz(e.startDate), nz(e.endDate)].filter(Boolean).join(' – ');
+        const bl=splitLines(e.bullets);
+        return '<div class="rp-entry"><div class="et">'+esc(e.title||'')+(e.company?' — '+esc(e.company):'')+'</div>'
+          +(meta?'<div class="em">'+esc(meta)+'</div>':'')
+          +(bl.length?'<ul>'+bl.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul>':'')+'</div>';
+      }).join('')); },
+    education: () => { const items=state.education.filter(e=>nz(e.degree)||nz(e.institution)||nz(e.field)); if(!items.length) return '';
+      return sec('Education', items.map(e=>{
+        let t=e.degree||''; if(e.field) t+=(t?' in ':'')+e.field; if(e.institution) t+=(t?' — ':'')+e.institution;
+        const meta=[e.graduationDate?('Graduated '+e.graduationDate):null, e.gpa?('GPA '+e.gpa):null].filter(Boolean).join('  |  ');
+        return '<div class="rp-entry"><div class="et">'+esc(t)+'</div>'+(meta?'<div class="em">'+esc(meta)+'</div>':'')+'</div>';
+      }).join('')); },
+    projects: () => { const items=state.projects.filter(p=>nz(p.title)); if(!items.length) return '';
+      return sec('Projects', items.map(p=>{
+        const tech=splitList(p.technologies);
+        return '<div class="rp-entry"><div class="et">'+esc(p.title)+'</div>'
+          +(tech.length?'<div class="em">Tech: '+tech.map(esc).join(', ')+'</div>':'')
+          +(nz(p.description)?'<div class="rp-body">'+esc(p.description)+'</div>':'')+'</div>';
+      }).join('')); },
+    certifications: () => { const a=splitList(state.certifications); return sec('Certifications', a.length ? '<ul style="margin:0;padding-left:16px">'+a.map(x=>'<li style="font-size:11.5px;color:#2a2a2a">'+esc(x)+'</li>').join('')+'</ul>' : ''); }
+  };
+  ORDER[tpl].forEach(k => h += R[k]());
+  $('page').innerHTML = h;
+  clearTimeout(saveTimer); saveTimer=setTimeout(saveDraft,250);
+}
+function profileLink(platform, value){
+  const label = platform === 'linkedin' ? 'LinkedIn' : 'GitHub';
+  const raw = nz(value).trim();
+  const candidate = /^https?:\/\//i.test(raw) ? raw : 'https://' + raw.replace(/^\/+/, '');
+  let href = null;
+  try {
+    const url = new URL(candidate);
+    const allowed = platform === 'linkedin' ? ['linkedin.com','www.linkedin.com'] : ['github.com','www.github.com'];
+    if (url.protocol === 'https:' && allowed.includes(url.hostname.toLowerCase()) && !url.username && !url.password) href = url.href;
+  } catch (_) {}
+  const icon = platform === 'linkedin'
+    ? '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 2h12v12H2z" rx="2"/><path d="M5 6v5M5 4.4v.1M7.5 11V6h2v.8c.3-.6.8-.9 1.5-.9 1.2 0 1.8.8 1.8 2.2V11h-2V8.4c0-.7-.2-1.1-.8-1.1s-.9.4-.9 1.1V11z" fill="#fff"/></svg>'
+    : '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 .8a7.2 7.2 0 0 0-2.3 14c.4.1.5-.2.5-.4v-1.3c-2.1.5-2.5-.9-2.5-.9-.3-.8-.8-1-.8-1-.7-.5.1-.5.1-.5.7 0 1.1.7 1.1.7.6 1.1 1.6.8 2 .6.1-.5.3-.8.5-1-1.7-.2-3.4-.8-3.4-3.6 0-.8.3-1.4.7-1.9-.1-.2-.3-1 .1-1.9 0 0 .6-.2 2 .7a7 7 0 0 1 3.7 0c1.4-.9 2-.7 2-.7.4.9.2 1.7.1 1.9.5.5.7 1.1.7 1.9 0 2.8-1.7 3.4-3.4 3.6.3.2.5.6.5 1.2v1.8c0 .2.1.5.5.4A7.2 7.2 0 0 0 8 .8z"/></svg>';
+  const content = icon+'<span>'+label+': '+esc(raw)+'</span>';
+  return href
+    ? '<a class="rp-social '+platform+'" href="'+esc(href)+'" target="_blank" rel="noopener noreferrer" aria-label="Open '+label+' profile">'+content+'</a>'
+    : '<span class="rp-social '+platform+'" aria-label="'+label+' profile URL">'+content+'</span>';
+}
+$('b-template').addEventListener('change', () => {
+  const template=TEMPLATES.find(t=>t.id===$('b-template').value);
+  state.accentColor=template?template.color:'#222222';
+  $('accent-color').value=state.accentColor; renderPreview();
+});
+$('accent-color').addEventListener('input',e=>{state.accentColor=e.target.value;renderPreview();});
+
+/* ===== Actions ===== */
+async function downloadPdf(){
+  const msg=$('b-msg'); msg.textContent='Generating…';
+  try{
+    const t=$('b-template').value;
+    const res=await fetch('/api/resumes/render?template='+t+'&accent='+encodeURIComponent(state.accentColor||'#222222'),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(collectResume())});
+    if(!res.ok){ msg.textContent='Error: '+(await res.text()); return; }
+    const blob=await res.blob(); const url=URL.createObjectURL(blob);
+    const a=document.createElement('a'); a.href=url; a.download='resume.pdf'; a.click(); URL.revokeObjectURL(url);
+    msg.textContent='Downloaded · '+t+' · '+blob.size+' bytes'; logActivity('Download', t+' · '+blob.size+' bytes', 'Done');
+  }catch(e){ msg.textContent='Error: '+e.message; }
+}
+async function validateResume(){
+  const msg=$('b-msg'); msg.textContent='Validating…';
+  const res=await fetch('/api/resumes/validate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(collectResume())});
+  const d=await res.json();
+  msg.textContent = d.valid ? ('Valid · '+(d.warnings||[]).length+' warning(s)') : ((d.errors||[]).length+' error(s): '+(d.errors||[]).join(', '));
+  logActivity('Validate', d.valid?'Passed':(d.errors.length+' errors'), d.valid?'Valid':'Issues');
+}
+
+/* ===== Parse ===== */
+async function parseText(){
+  const out=$('p-out'), msg=$('p-msg'); msg.textContent='Parsing…'; out.style.display='block'; out.textContent='…';
+  const res=await fetch('/api/resumes/parse-text',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text:$('p-text').value})});
+  const data=await res.json(); out.textContent=JSON.stringify(data.resume||data,null,2); msg.textContent='Parsed'; logActivity('Parse','Imported text','Parsed');
+  return data.resume;
+}
+async function parseIntoEditor(){
+  const r=await parseText(); if(!r) return;
+  loadResumeIntoEditor(r);
+  document.querySelector('[data-tab=build]').click(); $('b-msg').textContent='Loaded parsed resume into editor';
+}
+
+/* ===== Smart build: raw resume text + JD -> parse + tailor -> editor ===== */
+let lastTailored = null;
+async function smartBuild(){
+  const out=$('t-out'), msg=$('t-msg'); msg.textContent='Parsing & tailoring…';
+  let d;
+  try {
+    const res=await fetch('/api/resumes/smart',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({rawText:$('t-raw').value, jd:$('t-jd').value})});
+    if(!res.ok){ msg.textContent='Error: '+(await res.text()); return; }
+    d=await res.json();
+  } catch(e){ msg.textContent='Error: '+e.message; return; }
+
+  lastTailored = d.resume;
+  const cov=(d.covered||[]).length, miss=(d.missing||[]).length, tot=cov+miss, pct=tot?Math.round(cov/tot*100):0;
+  $('cov-donut').style.setProperty('--pct',pct+'%'); $('cov-pct').textContent=pct+'%';
+  const r=d.resume||{};
+  const expCount=(r.experience||[]).length, eduCount=(r.education||[]).length;
+  const chips=(arr,cls)=>(arr&&arr.length)?arr.map(k=>'<span class="chip '+cls+'">'+esc(k)+'</span>').join(''):'<span class="chip ghost">none</span>';
+  out.innerHTML=
+     '<button class="primary block" style="margin-bottom:16px" onclick="openTailoredInEditor()">Open tailored resume in editor →</button>'
+    +'<div class="chip-group"><div class="t">Extracted <span class="count">'+(r.skills||[]).length+' skills · '+expCount+' roles · '+eduCount+' education</span></div></div>'
+    +'<div class="chip-group"><div class="t">Prioritized skills <span class="count">most relevant first</span></div><div class="chips">'+chips(r.skills,'solid')+'</div></div>'
+    +'<div class="chip-group"><div class="t">Covered keywords <span class="count">'+cov+'</span></div><div class="chips">'+chips(d.covered,'')+'</div></div>'
+    +'<div class="chip-group"><div class="t">Missing / gaps <span class="count">not auto-filled — add only if true</span></div><div class="chips">'+chips(d.missing,'ghost')+'</div></div>';
+  msg.textContent='Done · '+pct+'% match'; logActivity('Smart build', pct+'% match · '+expCount+' roles parsed','Done');
+}
+function openTailoredInEditor(){
+  if(!lastTailored) return;
+  loadResumeIntoEditor(lastTailored);
+  document.querySelector('[data-tab=build]').click();
+  $('b-msg').textContent='Tailored resume loaded — review, edit, and download.';
+}
+function loadResumeIntoEditor(r){
+  checkpoint();
+  const c=r.contact||{};
+  state.basics={ fullName:c.fullName||'', email:c.email||'', phone:c.phone||'', location:c.location||'', linkedin:c.linkedin||'', github:c.github||'' };
+  state.summary=r.summary||'';
+  state.skills=(r.skills||[]).join(', ');
+  state.experience=(r.experience||[]).map(e=>({ title:e.title||'', company:e.company||'', startDate:e.startDate||'', endDate:e.endDate||'', bullets:(e.bullets||[]).join('\n') }));
+  if(!state.experience.length) state.experience=[{title:'',company:'',startDate:'',endDate:'',bullets:''}];
+  state.education=(r.education||[]).map(e=>({ degree:e.degree||'', field:e.field||'', institution:e.institution||'', graduationDate:e.graduationDate||'', gpa:e.gpa||'' }));
+  if(!state.education.length) state.education=[{degree:'',field:'',institution:'',graduationDate:'',gpa:''}];
+  state.projects=(r.projects||[]).map(p=>({ title:p.title||'', description:p.description||'', technologies:(p.technologies||[]).join(', ') }));
+  state.certifications=(r.certifications||[]).join(', ');
+  buildEditor(); renderPreview();
+}
+
+/* ===== Templates gallery ===== */
+const TEMPLATES=[
+  { id:'MINIMAL', meta:'No divider rules · classic section flow', badge:'Clean', color:'#777', div:false, caps:false, order:[['Summary',[90,80]],['Skills','chips'],['Experience',[95,88,70]],['Education',[80]]] },
+  { id:'PROFESSIONAL', meta:'Black rules · balanced hierarchy', badge:'Balanced', color:'#222', div:true, caps:false, order:[['Summary',[90,78]],['Skills','chips'],['Experience',[95,90,72]],['Education',[82]]] },
+  { id:'CHRONOLOGICAL', meta:'Experience first · standard headings', badge:'Timeline', color:'#222', div:true, caps:true, order:[['Experience',[95,90,80,70]],['Education',[82,70]],['Skills','chips']] },
+  { id:'TECHNICAL', meta:'Skills and projects first · technical roles', badge:'Skills-first', color:'#222', div:false, caps:true, order:[['Skills','chips'],['Projects',[92,80]],['Experience',[95,85]],['Education',[80]]] },
+  { id:'MODERN', meta:'Blue rules · summary and experience first', badge:'Blue accent', color:'#2563eb', div:true, caps:false, order:[['Summary',[90,80]],['Experience',[95,88,70]],['Skills','chips'],['Education',[82]]] },
+  { id:'EXECUTIVE', meta:'Teal rules · experience-first structure', badge:'Teal accent', color:'#0f766e', div:true, caps:false, order:[['Experience',[95,90,78]],['Education',[82,70]],['Skills','chips'],['Summary',[90,78]]] }
+];
+const cap1=s=>s.charAt(0)+s.slice(1).toLowerCase();
+function previewHtml(t){
+  let h='<div class="tpreview" style="--template-accent:'+t.color+'"><div class="tp-name"></div><div class="tp-contact"></div>';
+  for(const [label,body] of t.order){
+    h+='<div class="tp-sec"><div class="tp-h'+(t.caps?' caps':'')+(t.div?' div':'')+'">'+label+'</div>';
+    h+= body==='chips' ? '<div class="tp-chips">'+'<span></span>'.repeat(5)+'</div>' : body.map(w=>'<div class="tp-line" style="width:'+w+'%"></div>').join('');
+    h+='</div>';
+  }
+  return h+'</div>';
+}
+function renderPlans(filter){
+  const q=(filter||'').toLowerCase();
+  $('plans').innerHTML=TEMPLATES.filter(t=>!q||t.id.toLowerCase().includes(q)||t.meta.toLowerCase().includes(q)).map(t=>
+    '<div class="plan">'+previewHtml(t)+'<div class="plan-name">'+cap1(t.id)+'<span class="badge">'+t.badge+'</span></div><div class="plan-meta">'+t.meta+'</div><button class="primary block" onclick="useTemplate(\''+t.id+'\')">Use '+cap1(t.id)+'</button></div>').join('');
+}
+function useTemplate(id){ $('b-template').value=id; const t=TEMPLATES.find(x=>x.id===id); if(t)state.accentColor=t.color; $('accent-color').value=state.accentColor; renderPreview(); document.querySelector('[data-tab=build]').click(); $('b-msg').textContent=id+' selected'; }
+
+/* ===== init ===== */
+buildEditor(); renderPreview(); renderPlans();
+$('search').addEventListener('input', e=>renderPlans(e.target.value));
+fetch('/api/resumes/templates').then(r=>r.json()).then(t=>{ $('st-templates').textContent=t.length; }).catch(()=>{});
+</script>
+</body>
+</html>
